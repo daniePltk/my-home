@@ -1,25 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { AppService } from './app.service';
 
-// export interface IResponse<Object> {
-//   houses: Array<any>;
-// }
 
-export interface House<Object> {
-  'coords': {
-    'lat': number,
-    'lon': number
+export interface House {
+  coords: {
+    lat: number,
+    lon: number
   };
-  'params': {
-    'rooms': number,
-    'value': number
+  params: {
+    rooms: number,
+    value: number
   };
-  'street': string;
-  'distance': number;
+  street: string;
+  distance: number;
 }
-export interface Houses<Array> {
-  houses: House[];
+
+export interface Houses {
+  houses: Array<House>;
 }
+
 export interface BasePoint {
   lon: number;
   lat: number;
@@ -34,10 +33,13 @@ export class AppComponent implements OnInit {
   title = 'My Home';
   //houses: Array<any> = [];
   //dataObj: IResponse<Object>;
-  houses: Houses[];
-  list1: Array<number> = [];
-  list2: Array<string> = [];
-  list3: Array<number> = [];
+  houses: Houses;
+  // list1: Array<number> = [];
+  // list2: Array<string> = [];
+  // list3: Array<number> = [];
+  list1: Array<House> = [];
+  list2: Array<House> = [];
+  list3: Array<object> = [];
   templist: any;
   // basePoint: BasePoint;
   basePoint: BasePoint = {
@@ -52,21 +54,21 @@ export class AppComponent implements OnInit {
     this.service.getAllHousesFromApi().subscribe(
       data => {
         this.houses = Object.assign(data.houses); // Storing all the data in order to optimize performance and avoid unnecessary web calls
-        for (let i = 0; i < this.houses.length; i++) {
+        for (let i = 0; i < data.houses.length; i++) {
           if (this.houses[i].params !== undefined && this.houses[i].params.rooms > 5) {
-            this.list1.push(this.houses[i].params.rooms);
-            this.list1.sort((a, b) => a - b);
+            this.list1.push(this.houses[i]);
+            this.list1.sort((a, b) => a.params.rooms - b.params.rooms);
           }
-          // Since the Street names are already sorted alphabetically
-          this.list2.push(this.houses[i].street);
-          this.list2.sort(); // This step is unnecessary in case the results already sorted.
+          if (!(this.houses[i].hasOwnProperty('params') && this.houses[i].params.hasOwnProperty('rooms') && this.houses[i].params.hasOwnProperty('value'))) {
+            this.list2.push(this.houses[i]);
+            this.list2.sort(this.streetSortByName('street'));
+          }
           // Handle basePoint for Distance measure
           if (this.houses[i].street !== undefined && this.houses[i].street === 'Eberswalder Straße 55') {
             this.basePoint.lat = this.houses[i].coords.lat;
             this.basePoint.lon = this.houses[i].coords.lon;
             this.templist = this.basePoint;
           }
-          // this.list3.push(this.houses[i]);
         }
       }
     );
@@ -88,5 +90,12 @@ export class AppComponent implements OnInit {
 
   deg2rad(deg) {
     return deg * (Math.PI / 180);
+  }
+
+
+  streetSortByName(prop) {
+    return (a, b) => {
+        return a[prop].localeCompare(b[prop]);
+    };
   }
 }

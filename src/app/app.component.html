@@ -14,7 +14,7 @@
       <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
         <div class="card-body">
           <ul *ngFor="let item of list1">
-            <li>{{item}}</li>
+            <li>{{item.street}} | {{item.params.rooms}}</li>
           </ul>
         </div>
       </div>
@@ -31,7 +31,7 @@
       <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
         <div class="card-body">
           <ul *ngFor="let item of list2">
-            <li>{{item}}</li>
+            <li>{{item.street}}</li>
           </ul>
         </div>
       </div>
@@ -49,7 +49,7 @@
     <!--<ul *ngFor="let item of list3">-->
     <!--<li>{{item}}</li>-->
     <!--</ul>-->
-      <div><div>{{templist.lon}}</div><div>{{templist.lat}}</div></div>
+      <!--<div><div>{{templist.lon}}</div><div>{{templist.lat}}</div></div>-->
     </div>
     </div>
     </div>
