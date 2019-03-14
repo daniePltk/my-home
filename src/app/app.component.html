@@ -10,11 +10,10 @@
           </button>
         </h5>
       </div>
-
       <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
         <div class="card-body">
-          <ul class="list-group" *ngFor="let item of list1">
-            <li class="list-group-item">{{item.street}} | {{item.params.rooms}}</li>
+          <ul class="list-group" *ngFor="let item of housesSortedByRoomsNum">
+            <li class="list-group-item">Street name: {{item.street}} | Number of rooms: {{item.params.rooms}}</li>
           </ul>
         </div>
       </div>
@@ -24,50 +23,66 @@
         <h5 class="mb-0">
           <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false"
                   aria-controls="collapseTwo">
-            List 2 - Sorted list of houses according their missing information by street name
+            Sorted list of houses according their missing information by street name
           </button>
         </h5>
       </div>
       <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
         <div class="card-body">
-          <ul class="list-group" *ngFor="let item of list2">
+          <ul class="list-group" *ngFor="let item of housesWithoutFullInfo">
             <li class="list-group-item">{{item.street}}</li>
           </ul>
         </div>
       </div>
     </div>
     <div class="card">
-    <div class="card-header" id="headingThree">
-    <h5 class="mb-0">
-    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-    List 3
-    </button>
-    </h5>
+      <div class="card-header" id="headingThree">
+        <h5 class="mb-0">
+          <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree"
+                  aria-expanded="false" aria-controls="collapseThree">
+            My houses sorted by their closeness to my sisters house
+          </button>
+        </h5>
+      </div>
+      <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+        <div class="card-body">
+          <div class="map-holder">
+            <agm-map [latitude]="basePoint.lat" [longitude]="basePoint.lon" [zoom]="zoom">
+              <agm-marker [latitude]="basePoint.lat" [longitude]="basePoint.lon">
+                <agm-info-window [disableAutoPan]="true" isOpen="true">
+                  <a routerLink="/">Sister home</a>
+                </agm-info-window>
+              </agm-marker>
+
+              <agm-marker *ngFor="let marker of housesAllInfo" [latitude]="marker.coords.lat"
+                          [longitude]="marker.coords.lon">
+                <agm-info-window [disableAutoPan]="true">
+                  <a routerLink="/">{{marker.street}}</a>
+                </agm-info-window>
+              </agm-marker>
+            </agm-map>
+          </div>
+          <ul *ngFor="let item of housesAllInfo">
+            <li>Street name: {{item.street}} | Distance from sister: {{item.distanceFromSister}} KM</li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-    <div class="card-body">
-      <agm-map [latitude]="basePoint.lat" [longitude]="basePoint.lon" [zoom]="zoom">
-        <agm-marker [latitude]="basePoint.lat" [longitude]="basePoint.lon">
-          <agm-info-window [disableAutoPan]="true" isOpen="true">
-            <a routerLink="/">Sister home</a>
-          </agm-info-window>
-        </agm-marker>
-        <agm-marker *ngFor="let marker of housesAllInfo" [latitude]="marker.coords.lat"
-                    [longitude]="marker.coords.lon">
-          <agm-info-window [disableAutoPan]="true">
-            <a routerLink="/">{{marker.street}}</a>
-          </agm-info-window>
-        </agm-marker>
-      </agm-map>
-      <ul *ngFor="let item of housesAllInfo">
-        <li>Street name: {{item.street}} | Distance from sister: {{item.distanceFromSister}} KM</li>
-      </ul>
-      <!--<div>-->
-        <!--<div>{{templist.lon}}</div>-->
-        <!--<div>{{templist.lat}}</div>-->
-      <!--</div>-->
-    </div>
-    </div>
+    <div class="card">
+      <div class="card-header" id="headingFour">
+        <h5 class="mb-0">
+          <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseFour"
+                  aria-expanded="false" aria-controls="collapseFour">
+            My Final Home
+          </button>
+        </h5>
+      </div>
+      <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+        <div class="card-body">
+            Street name: {{myFinalHome.street}} | Distance from sister: {{myFinalHome.distanceFromSister}} KM
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
