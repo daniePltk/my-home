@@ -6,7 +6,7 @@
         <h5 class="mb-0">
           <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false"
                   aria-controls="collapseOne">
-            List 1 - Sorted list of houses according their room numbers in Ascending order
+            Sorted list of houses according their room numbers in Ascending order
           </button>
         </h5>
       </div>
@@ -63,7 +63,7 @@
             </agm-map>
           </div>
           <ul *ngFor="let item of housesAllInfo">
-            <li>Street name: {{item.street}} | Distance from sister: {{item.distanceFromSister}} KM</li>
+            <li>Street name: {{item.street}} | Distance from sister: {{item.distanceFromSister | number: '1.1-2'}} KM</li>
           </ul>
         </div>
       </div>
@@ -78,8 +78,9 @@
         </h5>
       </div>
       <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
-        <div class="card-body">
-            Street name: {{myFinalHome.street}} | Distance from sister: {{myFinalHome.distanceFromSister}} KM
+        <div class="card-body" *ngIf="myFinalHome">
+          Ideal house for your criteria is: <br />
+          Street name: {{myFinalHome.street}} | Distance from sister: {{myFinalHome.distanceFromSister | number: '1.1-2'}} KM
         </div>
       </div>
     </div>
