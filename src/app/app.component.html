@@ -6,15 +6,15 @@
         <h5 class="mb-0">
           <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false"
                   aria-controls="collapseOne">
-            List 1
+            List 1 - Sorted list of houses according their room numbers in Ascending order
           </button>
         </h5>
       </div>
 
       <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
         <div class="card-body">
-          <ul *ngFor="let item of list1">
-            <li>{{item.street}} | {{item.params.rooms}}</li>
+          <ul class="list-group" *ngFor="let item of list1">
+            <li class="list-group-item">{{item.street}} | {{item.params.rooms}}</li>
           </ul>
         </div>
       </div>
@@ -24,14 +24,14 @@
         <h5 class="mb-0">
           <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false"
                   aria-controls="collapseTwo">
-            List 2
+            List 2 - Sorted list of houses according their missing information by street name
           </button>
         </h5>
       </div>
       <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
         <div class="card-body">
-          <ul *ngFor="let item of list2">
-            <li>{{item.street}}</li>
+          <ul class="list-group" *ngFor="let item of list2">
+            <li class="list-group-item">{{item.street}}</li>
           </ul>
         </div>
       </div>
@@ -46,10 +46,26 @@
     </div>
     <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
     <div class="card-body">
-    <!--<ul *ngFor="let item of list3">-->
-    <!--<li>{{item}}</li>-->
-    <!--</ul>-->
-      <!--<div><div>{{templist.lon}}</div><div>{{templist.lat}}</div></div>-->
+      <agm-map [latitude]="basePoint.lat" [longitude]="basePoint.lon" [zoom]="zoom">
+        <agm-marker [latitude]="basePoint.lat" [longitude]="basePoint.lon">
+          <agm-info-window [disableAutoPan]="true" isOpen="true">
+            <a routerLink="/">Sister home</a>
+          </agm-info-window>
+        </agm-marker>
+        <agm-marker *ngFor="let marker of housesAllInfo" [latitude]="marker.coords.lat"
+                    [longitude]="marker.coords.lon">
+          <agm-info-window [disableAutoPan]="true">
+            <a routerLink="/">{{marker.street}}</a>
+          </agm-info-window>
+        </agm-marker>
+      </agm-map>
+      <ul *ngFor="let item of housesAllInfo">
+        <li>Street name: {{item.street}} | Distance from sister: {{item.distanceFromSister}} KM</li>
+      </ul>
+      <!--<div>-->
+        <!--<div>{{templist.lon}}</div>-->
+        <!--<div>{{templist.lat}}</div>-->
+      <!--</div>-->
     </div>
     </div>
     </div>

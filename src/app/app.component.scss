@@ -1,7 +1,10 @@
 
+
+
 .main-container{
   max-width: 900px;
   margin: 0 auto;
+  font-size: 16px;
 
   .main-header{
     display: flex;
@@ -9,5 +12,24 @@
     font-family: 'Segoe UI', Arial;
     font-size: 20px;
     margin: 20px 0;
+  }
+
+  .btn-link {
+    &:hover {
+      color: #0056b3;
+      text-decoration: none;
+    }
+  }
+
+  agm-map {
+    height: 300px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .main-container {
+    padding: 5%;
+    text-align: center;
+    font-size: 1rem;
   }
 }

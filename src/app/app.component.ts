@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppService } from './app.service';
+import { MapsAPILoader } from '@agm/core';
+declare var google;
 
 
 export interface House {
@@ -12,7 +14,7 @@ export interface House {
     value: number
   };
   street: string;
-  distance: number;
+  distanceFromSister?: number;
 }
 
 export interface Houses {
@@ -31,23 +33,22 @@ export interface BasePoint {
 })
 export class AppComponent implements OnInit {
   title = 'My Home';
-  //houses: Array<any> = [];
-  //dataObj: IResponse<Object>;
   houses: Houses;
-  // list1: Array<number> = [];
-  // list2: Array<string> = [];
-  // list3: Array<number> = [];
   list1: Array<House> = [];
   list2: Array<House> = [];
-  list3: Array<object> = [];
-  templist: any;
-  // basePoint: BasePoint;
+  list3: Array<House> = [];
   basePoint: BasePoint = {
     lon: 0,
     lat: 0
   };
-
-  constructor(private service: AppService) {
+  zoom = 11;
+  markers = [];
+  filteredMarkers = [];
+  housescords = [];
+  housesAllInfo = [];
+  distanceInKm;
+  in_criteria_houses = []
+  constructor(private service: AppService, private mapsAPILoader: MapsAPILoader) {
   }
 
   ngOnInit() {
@@ -55,6 +56,19 @@ export class AppComponent implements OnInit {
       data => {
         this.houses = Object.assign(data.houses); // Storing all the data in order to optimize performance and avoid unnecessary web calls
         for (let i = 0; i < data.houses.length; i++) {
+          if (this.houses[i].street === 'Eberswalder Straße 55') {
+            this.basePoint.lat = this.houses[i].coords.lat;
+            this.basePoint.lon = this.houses[i].coords.lon;
+          } else {
+            this.housescords.push(this.houses[i].coords);
+            this.mapsAPILoader.load().then(() => {
+              const sistersHouse = new google.maps.LatLng(this.basePoint.lat, this.basePoint.lon);
+              const markerLoc = new google.maps.LatLng(this.houses[i].coords.lat, this.houses[i].coords.lon);
+              const distance = google.maps.geometry.spherical.computeDistanceBetween(markerLoc, sistersHouse);
+              this.houses[i].distanceFromSister = distance;
+            });
+            this.housesAllInfo.push(this.houses[i]);
+          }
           if (this.houses[i].params !== undefined && this.houses[i].params.rooms > 5) {
             this.list1.push(this.houses[i]);
             this.list1.sort((a, b) => a.params.rooms - b.params.rooms);
@@ -63,39 +77,40 @@ export class AppComponent implements OnInit {
             this.list2.push(this.houses[i]);
             this.list2.sort(this.streetSortByName('street'));
           }
-          // Handle basePoint for Distance measure
-          if (this.houses[i].street !== undefined && this.houses[i].street === 'Eberswalder Straße 55') {
-            this.basePoint.lat = this.houses[i].coords.lat;
-            this.basePoint.lon = this.houses[i].coords.lon;
-            this.templist = this.basePoint;
+          // console.log( this.houses[i].params !== undefined);
+          if (this.houses[i].params !== undefined) {
+            if (this.houses[i].params.value !== undefined &&
+              this.houses[i].params.rooms !== undefined && this.houses[i].street !== 'Eberswalder Straße 55' &&
+              this.houses[i].params.rooms >= 10 && this.houses[i].params.value <= 5000000) {
+              this.in_criteria_houses = this.houses[i];
+              console.log(this.houses[i]);
+            }
           }
         }
-      }
-    );
+        this.markers = this.getLocations();
+        this.mapsAPILoader.load().then(() => {
+          const sistersHouse = new google.maps.LatLng(this.basePoint.lat, this.basePoint.lon);
+          this.housescords = this.markers.filter(m => {
+            const markerLoc = new google.maps.LatLng(m.lat, m.lon);
+            this.distanceInKm = google.maps.geometry.spherical.computeDistanceBetween(markerLoc, sistersHouse);
+            this.list3.push(this.distanceInKm);
+            this.list3.sort();
+            return m;
+          });
+        });
+        this.housesAllInfo.sort((a, b) => a.distanceFromSister - b.distanceFromSister);
+        console.log('house records', this.housesAllInfo);
+      });
+    // this.housesAllInfo.sort((a, b) => a.distanceFromSister - b.distanceFromSister);
+    // console.log('house records', this.housesAllInfo);
   }
-
-  getDistanceByCord(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Constant as earth radius in km
-    let disLat = this.deg2rad(lat2 - lat1);
-    let disLon = this.deg2rad(lon2 - lon1);
-    let a =
-      Math.sin(disLat / 2) * Math.sin(disLat / 2) +
-      Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
-      Math.sin(disLon / 2) * Math.sin(disLon / 2)
-    ;
-    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    let d = R * c; // Distance in km
-    return d;
+  getLocations(): Array<{ latitude: number, longitude: number }> {
+    return this.housescords;
   }
-
-  deg2rad(deg) {
-    return deg * (Math.PI / 180);
-  }
-
-
-  streetSortByName(prop) {
-    return (a, b) => {
-        return a[prop].localeCompare(b[prop]);
+  // ToDo Refactor to General Functions
+  streetSortByName(prop: any) {
+    return (a: any, b: any) => {
+      return a[prop].localeCompare(b[prop]);
     };
   }
 }

@@ -1,1 +1,69 @@
 /* You can add global styles to this file, and also import other style files */
+/*Page/HTML container
+---------------------*/
+html {
+
+  //color: #222;
+  //font-size: 1em;
+  line-height: 1.4;
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: auto;
+}
+
+body {
+  padding: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+
+select {
+  border: 1px solid transparent;
+  -webkit-appearance: none; /*Removes default chrome and safari style*/
+  -moz-appearance: none; /*Removes default style Firefox*/
+
+  &:focus {
+    background-color: #ffffff;
+    box-shadow: none;
+    outline: none;
+    border: 0px;
+  }
+}
+
+select::-ms-expand {
+  display: none; /*Removes default IE and safari style*/
+}
+
+/* Prevents default IE selected highlight*/
+select::-ms-value {
+  color: inherit;
+  background: transparent;
+}
+
+input {
+  border: 1px solid transparent;
+
+  &:focus {
+    border: 1px solid #cccccc !important;
+    background: #ffffff;
+    box-shadow: none;
+    outline: none;
+  }
+}
+
+/*IE - The cross will be hidden */
+input::-ms-clear {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+a {
+  text-decoration: none;
+}
